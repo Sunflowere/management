@@ -64,10 +64,10 @@
           </el-breadcrumb>
         </div>
         <div style="margin: 10px 0;">
-          <el-input style="width: 200px;" placeholder="请输入名称" suffix-icon="el-icon-search"></el-input>
+          <el-input style="width: 200px;" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="username"></el-input>
           <el-input style="width: 200px;" placeholder="请输入邮箱" suffix-icon="el-icon-message"></el-input>
-          <el-input style="width: 200px;" placeholder="请输入地址" suffix-icon="el-icon-position"></el-input>
-          <el-button class="ml-5" type="primary">搜索</el-button>
+          <el-input style="width: 200px;" placeholder="请输入地址" suffix-icon="el-icon-position" v-model="address"></el-input>
+          <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
         </div>
         <div style="margin: 10px 0;">
           <el-button type="primary">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
@@ -76,12 +76,12 @@
           <el-button type="primary">导出 <i class="el-icon-top"></i></el-button>
         </div>
         <el-table :data="tableData" border stripe :header-cell-class-name="headerBg">
-          <el-table-column prop="date" label="日期" width="140">
-          </el-table-column>
-          <el-table-column prop="name" label="姓名" width="120">
-          </el-table-column>
-          <el-table-column prop="address" label="地址">
-          </el-table-column>
+          <el-table-column prop="id" label="ID" width="50"></el-table-column>
+          <el-table-column prop="username" label="姓名" width="120"></el-table-column>
+          <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
+          <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
+          <el-table-column prop="phone" label="电话" width="150"></el-table-column>
+          <el-table-column prop="address" label="地址" width="220"></el-table-column>
           <el-table-column>
             <template slot-scope="scope">
               <el-button type="primary">编辑<i class="el-icon-edit"></i></el-button>
@@ -90,8 +90,14 @@
           </el-table-column>
         </el-table>
         <div style="padding: 10px 0;">
-          <el-pagination :page-sizes="[5, 10, 15, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper"
-            :total="400">
+          <el-pagination 
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageNum" 
+          :page-sizes="[5, 10, 15, 20]" 
+          :page-size="pageSize" 
+          layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
           </el-pagination>
         </div>
       </el-main>
@@ -100,24 +106,28 @@
 </template>
 
 <script>
+
 // @ is an alias to /src
 
 export default {
   name: 'HomeView',
   data() {
-    const item = {
-      date: '2016-05-02',
-      name: '唐小虎',
-      address: '上海市松江区文汇路 300 弄'
-    };
     return {
-      tableData: Array(10).fill(item),
+      tableData: [],
+      total: 0,
+      pageNum: 1,
+      pageSize: 10,
+      username: '',
+      address: '',
       collapseBtnClass: 'el-icon-s-fold',
       isCollapse: false,
       sideWidth: 200,
       logoTextShow: true,
       headerBg: 'headerBg'
     }
+  },
+  created() {
+    this.load()
   },
   methods: {
     collapse() {
@@ -132,7 +142,27 @@ export default {
         this.collapseBtnClass = 'el-icon-s-fold'
 
       }
+    },
+    load() {
+    //请求分页查询数据
+    fetch("http://localhost:9090/user/page?pageNum="+this.pageNum+"&pageSize="+this.pageSize+"&username="+this.username + "&address=" + this.address).then(res => res.json()).then(res => {
+      console.log(res)
+      this.tableData = res.pageData
+      this.total = res.totalNum
+    })
+    },
+    handleSizeChange(pageSize) {
+      console.log(`每页 ${pageSize} 条`);
+      this.pageSize = pageSize
+      this.load()
+    },
+    handleCurrentChange(pageNum) {
+      console.log(`当前页: ${pageNum}`);
+      this.pageNum = pageNum
+      this.load()
     }
+
+
   }
 }
 </script>

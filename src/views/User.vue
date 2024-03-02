@@ -13,7 +13,7 @@
         title="您确定删除吗？" @confirm="delBatch">
         <el-button slot="reference" type="danger">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
-      <el-upload action="http://121.199.77.181:9090/user/import" :show-file-list="false" accept="xlsx"
+      <el-upload action="http://localhost:9090/user/import" :show-file-list="false" accept="xlsx"
         :on-success="handleExcelImportSuccess" 
         :on-error="handleExcelImportError" style="display: inline-block">
         <el-button type="primary" class="ml-5">导入 <i class="el-icon-bottom"></i></el-button>
@@ -22,14 +22,15 @@
     </div>
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
       @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="id" label="ID" width="50"></el-table-column>
-      <el-table-column prop="username" label="姓名" width="120"></el-table-column>
+      <el-table-column type="selection" width="40"></el-table-column>
+      <el-table-column prop="id" label="ID" width="40"></el-table-column>
+      <el-table-column prop="username" label="姓名" width="100"></el-table-column>
+      <el-table-column prop="role" label="角色" width="120"></el-table-column>
       <el-table-column prop="nickname" label="昵称" width="150"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
-      <el-table-column prop="phone" label="电话" width="150"></el-table-column>
+      <el-table-column prop="phone" label="电话" width="100"></el-table-column>
       <el-table-column prop="address" label="地址" width="300"></el-table-column>
-      <el-table-column>
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" @click="handleEdit(scope.row)">编辑<i class="el-icon-edit"></i></el-button>
 
@@ -50,8 +51,13 @@
 
     <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="25%">
       <el-form :model="form" label-width="60px" size="small">
-        <el-form-item label="姓名">
+        <el-form-item label="用户名">
           <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select clearable v-model="form.role" placeholder="请选择角色">
+            <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.flag"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="昵称">
           <el-input v-model="form.nickname" autocomplete="off"></el-input>
@@ -88,6 +94,7 @@ export default {
       username: '',
       email: '',
       address: '',
+      roles: [],
       headerBg: 'headerBg',
       dialogFormVisible: false
     }
@@ -110,6 +117,10 @@ export default {
         console.log(res)
         this.tableData = res.records
         this.total = res.total
+      })
+
+      this.request.get("/role/search").then((res) => {
+        this.roles = res
       })
     },
     reset() {
@@ -152,7 +163,7 @@ export default {
       }
     },
     exp() {
-      window.open("http://121.199.77.181:9090/user/export")
+      window.open("http://localhost:9090/user/export")
     },
     handleExcelImportSuccess() {
       this.$message.success("导入成功")
@@ -178,7 +189,7 @@ export default {
     },
     save() {
       this.request.post("/user/addUser", this.form).then(res => {
-        if (res) {
+        if (res.code === '200') {
           this.$message.success("保存成功")
           this.dialogFormVisible = false
           this.load()

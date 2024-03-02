@@ -4,7 +4,7 @@
             <el-avatar :src="user.avatarUrl"></el-avatar>
         </div> -->
         <el-form label-width="60px" size="small">
-            <el-upload class="avatar-uploader" action="http://121.199.77.181:9090/file/upload" :show-file-list="false"
+            <el-upload class="avatar-uploader" action="http://localhost:9090/file/upload" :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :on-error="handleAvatarError">
                 <img v-if="form.avatarUrl" :src="form.avatarUrl" class="avatar">

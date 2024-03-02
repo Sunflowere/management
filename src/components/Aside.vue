@@ -4,8 +4,8 @@
     router 
     >
     <div style="height: 60px; line-height: 60px; text-align: center;">
-      <img src="../assets/logo.png" alt="logo" style="width: 20px; position: relative; top: 5px; margin-right: 5px;">
-      <b style="color: blanchedalmond;" v-show="logoTextShow">后台管理系统</b>
+      <img src="../../public/logo2.jpg" alt="logo" style="width: 30px; position: relative; top: 5px; margin-right: 5px;">
+      <b style="color: blanchedalmond;" v-show="logoTextShow"> 能 耗 管 理 平 台</b>
     </div>
     <el-menu-item index="/">
       <template slot="title">
@@ -15,12 +15,20 @@
     </el-menu-item>
     <el-submenu index="2">
       <template slot="title">
-        <i class="el-icon-menu"></i>
+        <i class="el-icon-s-platform"></i>
         <span slot="title">系统管理</span>
       </template>
       <el-menu-item index="/user">
-          <i class="el-icon-s-custom"></i>
+          <i class="el-icon-user"></i>
           <span slot="title">用户管理</span>
+      </el-menu-item>
+      <el-menu-item index="/role">
+          <i class="el-icon-s-custom"></i>
+          <span slot="title">角色管理</span>
+      </el-menu-item>
+      <el-menu-item index="/menu">
+          <i class="el-icon-menu"></i>
+          <span slot="title">菜单管理</span>
       </el-menu-item>
       <el-menu-item index="/file">
         <i class="el-icon-document"></i>

@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
+
   {
     path: '/',
     component: () => import('../views/Manage.vue'),
@@ -20,6 +21,16 @@ const routes = [
         path: '/user',
         name: '用户管理',
         component: () => import('../views/User.vue')
+      },
+      {
+        path: '/role',
+        name: '角色管理',
+        component: () => import('../views/Role.vue')
+      },
+      {
+        path: '/menu',
+        name: '菜单管理',
+        component: () => import('../views/Menu.vue')
       },
       {
         path: '/person',

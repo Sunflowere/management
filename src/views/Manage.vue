@@ -31,7 +31,7 @@ export default {
     return {
       collapseBtnClass: 'el-icon-s-fold',
       isCollapse: false,
-      sideWidth: 200,
+      sideWidth: 220,
       logoTextShow: true,
     }
   },

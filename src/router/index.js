@@ -41,6 +41,26 @@ const routes = [
         name: '文件管理', 
         component: () => import('../views/File.vue')
       },
+      {
+        path: '/department',
+        name: '部门管理',
+        component: () => import('../views/department.vue')
+      },
+      {
+        path: '/device',
+        name: '设备管理',
+        component: () => import('../views/Device.vue')
+      },
+      {
+        path: '/econsumption',
+        name: '用电数据',
+        component: () => import('../views/Econsumption.vue')
+      },
+      {
+        path: '/analysis',
+        name: '能耗分析',
+        component: () => import('../views/AnalysisE.vue')
+      },
     ]
   },
   {

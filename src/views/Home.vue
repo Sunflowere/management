@@ -47,7 +47,7 @@ export default {
 
       var chartDom = document.getElementById("main");
       var myChart = echarts.init(chartDom);
-
+      
       this.request.get("/echarts/members").then((res) => {
         // 填空
         // option.xAxis.data = res.data.x
@@ -98,7 +98,7 @@ export default {
           },
         ],
       };
-
+      
       var pieDom = document.getElementById("pie");
       var pieChart = echarts.init(pieDom);
 

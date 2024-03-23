@@ -57,6 +57,11 @@ const routes = [
         component: () => import('../views/Econsumption.vue')
       },
       {
+        path: '/wconsumption',
+        name: '用水数据',
+        component: () => import('../views/Wconsumption.vue')
+      },
+      {
         path: '/analysis',
         name: '能耗分析',
         component: () => import('../views/AnalysisE.vue')

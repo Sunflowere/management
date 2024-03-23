@@ -3,15 +3,15 @@
     <div style="margin: 10px 0">
       <el-input
         style="width: 200px"
-        placeholder="请输入用电部门id"
+        placeholder="请输入用水部门id"
         suffix-icon="el-icon-search"
-        v-model="departmentId"
+        v-model="department_id"
       ></el-input>
       <el-input
         style="width: 200px"
-        placeholder="请输入用电系统"
+        placeholder="请输入用水系统"
         suffix-icon="el-icon-mic"
-        v-model="systemE"
+        v-model="system_W"
       ></el-input>
       <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
       <el-button type="warning" @click="reset">重置</el-button>
@@ -34,7 +34,7 @@
         ></el-button>
       </el-popconfirm>
       <el-upload
-        action="http://localhost:9090/econsumption/import"
+        action="http://localhost:9090/wconsumption/import"
         :show-file-list="false"
         accept="xlsx"
         :on-success="handleExcelImportSuccess"
@@ -59,27 +59,22 @@
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column prop="id" label="ID" width="40"></el-table-column>
       <el-table-column
-        prop="departmentId"
-        label="用电部门id"
+        prop="department_id"
+        label="用水部门id"
         width="85"
       ></el-table-column>
       <el-table-column
-        prop="systemE"
-        label="用电系统"
+        prop="system_W"
+        label="用水系统"
         width="140"
       ></el-table-column>
       <el-table-column
-        prop="partE"
-        label="用电结构"
-        width="150"
-      ></el-table-column>
-      <el-table-column
         prop="calculation"
-        label="计量(单位kWh)"
+        label="计量(单位m³)"
         width="200"
       ></el-table-column>
       <el-table-column
-        prop="dateTime"
+        prop="date_time"
         label="统计日期"
         width="150"
       ></el-table-column>
@@ -120,27 +115,24 @@
 
     <el-dialog title="数据报表" :visible.sync="dialogFormVisible" width="25%">
       <el-form :model="form" label-width="100px" size="small">
-        <el-form-item label="用电部门id">
+        <el-form-item label="用水部门id">
           <el-input
-            v-model="form.departmentId"
+            v-model="form.department_id"
             autocomplete="off"
             placeholder="必填项"
           ></el-input>
         </el-form-item>
-        <el-form-item label="用电系统">
-          <el-select clearable v-model="form.systemE" placeholder="请选择系统">
+        <el-form-item label="用水系统">
+          <el-select clearable v-model="form.system_W" placeholder="请选择系统">
             <el-option
-              v-for="item in systemEs"
+              v-for="item in system_Ws"
               :key="item.value"
               :label="item.label"
               :value="item.label"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用电结构">
-          <el-input v-model="form.partE" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="计量(kWh)">
+        <el-form-item label="计量(m³)">
           <el-input
             v-model="form.calculation"
             autocomplete="off"
@@ -148,7 +140,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="统计日期">
-          <el-input v-model="form.dateTime" autocomplete="off"></el-input>
+          <el-input v-model="form.date_time" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -161,7 +153,7 @@
 
 <script>
 export default {
-  name: "Eeconsumption",
+  name: "Ewconsumption",
   data() {
     return {
       form: {},
@@ -170,24 +162,24 @@ export default {
       total: 0,
       pageNum: 1,
       pageSize: 20,
-      departmentId: "",
-      systemE: "",
-      systemEs: [
+      department_id: "",
+      system_W: "",
+      system_Ws: [
         {
           value: "选项1",
-          label: "暖通空调系统",
+          label: "生活用水",
         },
         {
           value: "选项2",
-          label: "照明插座系统",
+          label: "暖通空调系统补水",
         },
         {
           value: "选项3",
-          label: "动力系统",
+          label: "绿化用水",
         },
         {
           value: "选项4",
-          label: "特殊区域用电",
+          label: "特殊区域用水",
         },
       ],
       headerBg: "headerBg",
@@ -201,12 +193,12 @@ export default {
     load() {
       //请求分页查询数据
       this.request
-        .get("/econsumption/page", {
+        .get("/wconsumption/page", {
           params: {
             pageNum: this.pageNum,
             pageSize: this.pageSize,
-            departmentId: this.departmentId,
-            systemE: this.systemE,
+            department_id: this.department_id,
+            system_W: this.system_W,
           },
         })
         .then((res) => {
@@ -216,8 +208,8 @@ export default {
         });
     },
     reset() {
-      this.departmentId = "";
-      this.systemE = "";
+      this.department_id = "";
+      this.system_W = "";
       this.load();
     },
     handleAdd() {
@@ -229,7 +221,7 @@ export default {
       this.dialogFormVisible = true;
     },
     del(id) {
-      this.request.delete("/econsumption/" + id).then((res) => {
+      this.request.delete("/wconsumption/" + id).then((res) => {
         if (res) {
           this.$message.success("删除成功");
           this.load();
@@ -243,7 +235,7 @@ export default {
       if (ids.length === 0) {
         this.$message.error("没有数据可以删除");
       } else {
-        this.request.post("/econsumption/delete/batch", ids).then((res) => {
+        this.request.post("/wconsumption/delete/batch", ids).then((res) => {
           if (res) {
             this.$message.success("批量删除成功");
             this.load();
@@ -254,7 +246,7 @@ export default {
       }
     },
     exp() {
-      window.open("http://localhost:9090/econsumption/export");
+      window.open("http://localhost:9090/wconsumption/export");
     },
     handleExcelImportSuccess() {
       this.$message.success("导入成功");
@@ -282,9 +274,9 @@ export default {
       var tmp_form = JSON.stringify(this.form);
       if (
         tmp_form === "{}" ||
-        this.form.departmentId === "" ||
-        this.form.departmentId === null ||
-        this.form.departmentId === undefined ||
+        this.form.department_id === "" ||
+        this.form.department_id === null ||
+        this.form.department_id === undefined ||
         this.form.calculation === "" ||
         this.form.calculation === null ||
         this.form.calculation === undefined
@@ -292,7 +284,7 @@ export default {
         this.$message.error("保存失败，请检查数据必填项等数据");
       } else {
         this.request
-          .post("/econsumption/addEconsumption", this.form)
+          .post("/wconsumption/addWconsumption", this.form)
           .then((res) => {
             if (res.code === "200") {
               this.$message.success("保存成功");

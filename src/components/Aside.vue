@@ -58,7 +58,7 @@
           <i class="el-icon-s-opportunity"></i>
           <span slot="title">用电数据</span>
         </el-menu-item>
-        <el-menu-item index="/file">
+        <el-menu-item index="/wconsumption">
           <i class="el-icon-goblet-square-full"></i>
           <span slot="title">用水数据</span>
         </el-menu-item>

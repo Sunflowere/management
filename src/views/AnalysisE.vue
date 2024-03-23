@@ -89,31 +89,59 @@
       <el-col :span="4">
         <el-row>
           <el-card shadow="always">
-            <div id="total_day" style="width: 500px; height: 190px">
-              <span style="text-align: center; padding-right: 10px"
-                >当日总用电</span
+            <div id="total_day" style="width: 100%; height: 220px">
+              <el-descriptions
+                title="用电概览"
+                direction="vertical"
+                :column="1"
+                border
               >
-              <i class="el-icon-sunny"></i>
+                <el-descriptions-item label="当日用电"
+                  >{{ this.eData.data_day }} kWh</el-descriptions-item
+                >
+                <el-descriptions-item label="当月用电"
+                  >{{ this.eData.data_month }} kWh</el-descriptions-item
+                >
+                <el-descriptions-item label="当年用电"
+                  >{{ this.eData.data_year }} kWh</el-descriptions-item
+                >
+              </el-descriptions>
+              <!-- <i class="el-icon-sunny"></i> -->
             </div>
           </el-card>
         </el-row>
         <el-row>
           <el-card>
-            <div id="total_year" style="width: 500px; height: 190px">
+            <div id="total_year" style="width: 500px; height: 90px">
               <span style="text-align: center; padding-right: 10px"
-                >当月总用电</span
+                >部门累计用电</span
               >
               <i class="el-icon-stopwatch"></i>
+              <h5 style="padding-top: 15px; font-size: medium;">{{ this.department.sumE }} kWh 🚩</h5>
+              
             </div>
           </el-card>
         </el-row>
         <el-row>
           <el-card>
-            <div id="total_four" style="width: 500px; height: 200px">
-              <span style="text-align: center; padding-right: 10px"
-                >当年总用电</span
+            <div id="total_four" style="width: 100%; height: 270px">
+              <el-descriptions
+                title="部门设备"
+                direction="vertical"
+                :column="1"
+                border
               >
-              <i class="el-icon-timer"></i>
+                <el-descriptions-item label="正常设备"
+                  >{{ this.deviceData.normalDevice }} 台</el-descriptions-item
+                >
+                <el-descriptions-item label="异常设备"
+                  >{{ this.deviceData.errorDevice }} 台</el-descriptions-item
+                >
+                <el-descriptions-item label="断开连接"
+                  >{{ this.deviceData.disconnected }} 台</el-descriptions-item
+                >
+              </el-descriptions>
+
             </div>
           </el-card>
         </el-row>
@@ -132,11 +160,15 @@ export default {
       id: 2,
       departments: [],
       department: {},
+      eData: {},
+      deviceData: {},
     };
   },
   created() {
     this.getDepartments();
     this.getDepartment(this.id);
+    this.getEData();
+    this.getDeviceData();
   },
   watch: {
     id(newId) {
@@ -144,13 +176,36 @@ export default {
       this.showDayEcharts();
       this.showYearEcharts();
       this.showThreeYearEcharts();
-    }
+      this.getEData();
+      this.getDeviceData();
+    },
   },
   methods: {
+    hilarity() {
+      this.$notify({
+        title: "提示",
+        message: "时间已到",
+        duration: 0,
+      });
+    },
+    getEData() {
+      this.request.get("/econsumption/eData/" + this.id).then((res) => {
+        if (res.code === '200') {
+          this.eData = res.data
+        }
+      })
+    },
+    getDeviceData() {
+      this.request.get("/device/deviceData/" + this.id).then((res) => {
+        if (res.code === '200') {
+          this.deviceData = res.data
+        }
+      })
+    },
     getDepartment(id) {
       this.request.get("/department/departmentIfo/" + id).then((res) => {
         this.department = res.data;
-        console.log(this.department);
+        // console.log(this.department);
       });
     },
     getDepartments() {
@@ -429,7 +484,7 @@ export default {
       var i;
       for (i = 1; i <= 12; i++) {
         option_threeYear.dataset.source[i] = [];
-        option_threeYear.dataset.source[i][0] = '0' + i;
+        option_threeYear.dataset.source[i][0] = "0" + i;
       }
       this.request.get("/echarts/source/" + this.id).then((res) => {
         if (res.code === "200") {
@@ -443,7 +498,7 @@ export default {
                 res.data.list[j - 1][i - 1];
             }
           }
-          console.log(option_threeYear.dataset.source);
+          // console.log(option_threeYear.dataset.source);
         }
         myChart.setOption(option_threeYear);
       });
@@ -458,9 +513,6 @@ export default {
 </script>
 
 <style scoped>
-.my-label {
-  background: rgb(29, 234, 18) f;
-}
 .visualization {
   display: flex;
   flex-wrap: wrap;

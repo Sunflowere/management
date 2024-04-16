@@ -3,18 +3,20 @@
     <div style="margin: 10px 0">
       <el-input
         style="width: 200px"
+        size="medium"
         placeholder="请输入用电部门id"
         suffix-icon="el-icon-search"
         v-model="departmentId"
       ></el-input>
       <el-input
-        style="width: 200px"
+        style="width: 200px; padding-left: 10px;"
+        size="medium"
         placeholder="请输入用电系统"
         suffix-icon="el-icon-mic"
         v-model="systemE"
       ></el-input>
-      <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
-      <el-button type="warning" @click="reset">重置</el-button>
+      <el-button class="ml-5" size="medium" type="primary" @click="load">搜索</el-button>
+      <el-button type="warning" size="medium" @click="reset">重置</el-button>
     </div>
     <div style="margin: 10px 0">
       <el-button type="primary" @click="handleAdd"
@@ -137,6 +139,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        
         <el-form-item label="用电结构">
           <el-input v-model="form.partE" autocomplete="off"></el-input>
         </el-form-item>
@@ -287,7 +290,10 @@ export default {
         this.form.departmentId === undefined ||
         this.form.calculation === "" ||
         this.form.calculation === null ||
-        this.form.calculation === undefined
+        this.form.calculation === undefined ||
+        this.form.systemE === "" || 
+        this.form.systemE === null ||
+        this.form.systemE === undefined
       ) {
         this.$message.error("保存失败，请检查数据必填项等数据");
       } else {

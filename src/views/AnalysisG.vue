@@ -59,7 +59,7 @@
             </el-col>
             <el-card>
               <div id="day" style="width: 100%; height: 300px">
-                24小时用水数据
+                24小时用气数据
               </div>
             </el-card>
           </el-row>
@@ -67,20 +67,20 @@
             <el-col :span="12">
               <el-card>
                 <div style="text-align: center; font-weight: bold">
-                  年度用水数据
+                  年度用气数据
                 </div>
                 <div id="year" style="width: 500px; height: 300px">
-                  年度用水数据
+                  年度用气数据
                 </div>
               </el-card>
             </el-col>
             <el-col :span="12">
               <el-card>
                 <div style="text-align: center; font-weight: bold">
-                  近三年用水数据对比
+                  近三年用气数据对比
                 </div>
                 <div id="four_year" style="width: 500px; height: 300px">
-                  近三年用水数据对比
+                  近三年用气数据对比
                 </div>
               </el-card>
             </el-col>
@@ -91,18 +91,18 @@
             <el-card shadow="always">
               <div id="total_day" style="width: 100%; height: 220px">
                 <el-descriptions
-                  title="用水概览"
+                  title="用气概览"
                   direction="vertical"
                   :column="1"
                   border
                 >
-                  <el-descriptions-item label="当日用水"
+                  <el-descriptions-item label="当日用气"
                     >{{ this.Data.data_day }} m³</el-descriptions-item
                   >
-                  <el-descriptions-item label="当月用水"
+                  <el-descriptions-item label="当月用气"
                     >{{ this.Data.data_month }} m³</el-descriptions-item
                   >
-                  <el-descriptions-item label="当年用水"
+                  <el-descriptions-item label="当年用气"
                     >{{ this.Data.data_year }} m³</el-descriptions-item
                   >
                 </el-descriptions>
@@ -114,10 +114,10 @@
             <el-card>
               <div id="total_year" style="width: 500px; height: 90px">
                 <span style="text-align: center; padding-right: 10px"
-                  >部门累计用水</span
+                  >部门累计用气</span
                 >
                 <i class="el-icon-stopwatch"></i>
-                <h5 style="padding-top: 15px; font-size: medium;">{{ this.department.sumW }} m³ 🚩</h5>
+                <h5 style="padding-top: 15px; font-size: medium;">{{ this.department.sumG }} m³ 🚩</h5>
                 
               </div>
             </el-card>
@@ -126,19 +126,19 @@
             <el-card>
               <div id="total_four" style="width: 100%; height: 270px">
                 <el-descriptions
-                  title="部门用水设备"
+                  title="部门用气设备"
                   direction="vertical"
                   :column="1"
                   border
                 >
                   <el-descriptions-item label="正常设备"
-                    >{{ this.deviceData.normalWDevice }} 台</el-descriptions-item
+                    >{{ this.deviceData.normalGDevice }} 台</el-descriptions-item
                   >
                   <el-descriptions-item label="异常设备"
-                    >{{ this.deviceData.errorWDevice }} 台</el-descriptions-item
+                    >{{ this.deviceData.errorGDevice }} 台</el-descriptions-item
                   >
                   <el-descriptions-item label="断开连接"
-                    >{{ this.deviceData.disconnectedW }} 台</el-descriptions-item
+                    >{{ this.deviceData.disconnectedG }} 台</el-descriptions-item
                   >
                 </el-descriptions>
   
@@ -154,7 +154,7 @@
   import * as echarts from "echarts";
   
   export default {
-    name: "WaterVisualization",
+    name: "GasVisualization",
     data() {
       return {
         id: 2,
@@ -189,14 +189,14 @@
         });
       },
       getData() {
-        this.request.get("/wconsumption/Data/" + this.id).then((res) => {
+        this.request.get("/gconsumption/Data/" + this.id).then((res) => {
           if (res.code === '200') {
             this.Data = res.data
           }
         })
       },
       getDeviceData() {
-        this.request.get("/device/deviceWData/" + this.id).then((res) => {
+        this.request.get("/device/deviceGData/" + this.id).then((res) => {
           if (res.code === '200') {
             this.deviceData = res.data
           }
@@ -220,7 +220,7 @@
   
         option_day = {
           title: {
-            text: "24小时用水值趋势",
+            text: "24小时用气值趋势",
           },
           tooltip: {
             trigger: "axis",
@@ -233,11 +233,11 @@
           },
           legend: {
             data: [
-              "总用水",
-              "生活用水",
-              "暖通空调系统补水",
-              "绿化用水",
-              "特殊区域用水",
+              "总用气",
+              "城市燃气",
+              "工业燃料",
+              "化工",
+              "发电",
             ],
           },
           toolbox: {
@@ -278,7 +278,7 @@
           ],
           series: [
             {
-              name: "总用水",
+              name: "总用气",
               type: "line",
               stack: "Total",
               areaStyle: {},
@@ -288,7 +288,7 @@
               data: [],
             },
             {
-              name: "生活用水",
+              name: "城市燃气",
               type: "line",
               stack: "Total",
               areaStyle: {},
@@ -298,7 +298,7 @@
               data: [],
             },
             {
-              name: "暖通空调系统补水",
+              name: "工业燃料",
               type: "line",
               stack: "Total",
               areaStyle: {},
@@ -308,7 +308,7 @@
               data: [],
             },
             {
-              name: "绿化用水",
+              name: "化工",
               type: "line",
               stack: "Total",
               areaStyle: {},
@@ -318,7 +318,7 @@
               data: [],
             },
             {
-              name: "特殊区域用水",
+              name: "发电",
               type: "line",
               stack: "Total",
               label: {
@@ -333,7 +333,7 @@
             },
           ],
         };
-        this.request.get("/wEcharts/departmentIfo/" + this.id).then((res) => {
+        this.request.get("/gEcharts/departmentIfo/" + this.id).then((res) => {
           option_day.series[0].data = res.data[0];
           option_day.series[1].data = res.data[1];
           option_day.series[2].data = res.data[2];
@@ -387,7 +387,7 @@
           ],
           series: [
             {
-              name: "总用水",
+              name: "总用气",
               type: "bar",
               emphasis: {
                 focus: "series",
@@ -395,16 +395,7 @@
               data: [],
             },
             {
-              name: "生活用水",
-              type: "bar",
-              stack: "Ad",
-              emphasis: {
-                focus: "series",
-              },
-              data: [],
-            },
-            {
-              name: "暖通空调系统补水",
+              name: "城市燃气",
               type: "bar",
               stack: "Ad",
               emphasis: {
@@ -413,7 +404,7 @@
               data: [],
             },
             {
-              name: "绿化用水",
+              name: "工业燃料",
               type: "bar",
               stack: "Ad",
               emphasis: {
@@ -422,7 +413,16 @@
               data: [],
             },
             {
-              name: "特殊区域用水 ",
+              name: "化工",
+              type: "bar",
+              stack: "Ad",
+              emphasis: {
+                focus: "series",
+              },
+              data: [],
+            },
+            {
+              name: "发电 ",
               type: "bar",
               stack: "Ad",
               emphasis: {
@@ -432,7 +432,7 @@
             },
           ],
         };
-        this.request.get("/wEcharts/yearDepartmentIfo/" + this.id).then((res) => {
+        this.request.get("/gEcharts/yearDepartmentIfo/" + this.id).then((res) => {
           if (res.code === "200") {
             option_year.series[0].data = res.data[0];
             option_year.series[1].data = res.data[1];
@@ -486,7 +486,7 @@
           option_threeYear.dataset.source[i] = [];
           option_threeYear.dataset.source[i][0] = "0" + i;
         }
-        this.request.get("/wEcharts/source/" + this.id).then((res) => {
+        this.request.get("/gEcharts/source/" + this.id).then((res) => {
           if (res.code === "200") {
             option_threeYear.dataset.source[0][1] = res.data.dataYear[2];
             option_threeYear.dataset.source[0][2] = res.data.dataYear[1];

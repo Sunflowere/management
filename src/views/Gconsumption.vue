@@ -4,9 +4,16 @@
       <el-input
         style="width: 200px"
         size="medium"
-        placeholder="请输入名称"
+        placeholder="请输入用气部门id"
         suffix-icon="el-icon-search"
-        v-model="name"
+        v-model="department_id"
+      ></el-input>
+      <el-input
+        style="width: 200px; padding-left: 10px;"
+        size="medium"
+        placeholder="请输入用气系统"
+        suffix-icon="el-icon-mic"
+        v-model="system_G"
       ></el-input>
       <el-button class="ml-5" size="medium" type="primary" @click="load">搜索</el-button>
       <el-button type="warning" size="medium" @click="reset">重置</el-button>
@@ -28,6 +35,21 @@
           >批量删除 <i class="el-icon-remove-outline"></i
         ></el-button>
       </el-popconfirm>
+      <el-upload
+        action="http://localhost:9090/gconsumption/import"
+        :show-file-list="false"
+        accept="xlsx"
+        :on-success="handleExcelImportSuccess"
+        :on-error="handleExcelImportError"
+        style="display: inline-block"
+      >
+        <el-button type="primary" class="ml-5"
+          >导入 <i class="el-icon-bottom"></i
+        ></el-button>
+      </el-upload>
+      <el-button type="primary" class="ml-5" @click="exp"
+        >导出 <i class="el-icon-top"></i
+      ></el-button>
     </div>
     <el-table
       :data="tableData"
@@ -36,15 +58,30 @@
       :header-cell-class-name="headerBg"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
-      <el-table-column prop="name" label="名称" width="140"></el-table-column>
-      <el-table-column prop="description" label="描述"></el-table-column>
-      <el-table-column label="操作" width="280">
+      <el-table-column type="selection" width="40"></el-table-column>
+      <el-table-column prop="id" label="ID" width="40"></el-table-column>
+      <el-table-column
+        prop="department_id"
+        label="用气部门id"
+        width="85"
+      ></el-table-column>
+      <el-table-column
+        prop="system_G"
+        label="用气系统"
+        width="140"
+      ></el-table-column>
+      <el-table-column
+        prop="calculation"
+        label="计量(单位m³)"
+        width="200"
+      ></el-table-column>
+      <el-table-column
+        prop="date_time"
+        label="统计日期"
+        width="150"
+      ></el-table-column>
+      <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="info" @click="selectMenu(scope.row.id)"
-            >分配菜单<i class="el-icon-menu"></i
-          ></el-button>
           <el-button type="primary" @click="handleEdit(scope.row)"
             >编辑<i class="el-icon-edit"></i
           ></el-button>
@@ -78,13 +115,34 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="角色信息" :visible.sync="dialogFormVisible" width="25%">
-      <el-form :model="form" label-width="60px" size="small">
-        <el-form-item label="名称">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+    <el-dialog title="数据报表" :visible.sync="dialogFormVisible" width="25%">
+      <el-form :model="form" label-width="100px" size="small">
+        <el-form-item label="用气部门id">
+          <el-input
+            v-model="form.department_id"
+            autocomplete="off"
+            placeholder="必填项"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="form.description" autocomplete="off"></el-input>
+        <el-form-item label="用气系统">
+          <el-select clearable v-model="form.system_G" placeholder="请选择系统">
+            <el-option
+              v-for="item in system_Gs"
+              :key="item.value"
+              :label="item.label"
+              :value="item.label"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="计量(m³)">
+          <el-input
+            v-model="form.calculation"
+            autocomplete="off"
+            placeholder="必填项"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="统计日期">
+          <el-input v-model="form.date_time" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -92,30 +150,12 @@
         <el-button type="primary" @click="save">确 定</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog title="菜单分配" :visible.sync="menuDialogVis" width="30%">
-      <el-tree
-        :data="menuData"
-        show-checkbox
-        node-key="id"
-        ref="tree"
-        :default-expanded-keys="expends"
-        :default-checked-keys="checks"
-        :props="Props"
-      >
-      </el-tree>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="menuDialogVis = false">取 消</el-button>
-        <el-button type="primary" @click="saveRoleMenu">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Role",
+  name: "Egconsumption",
   data() {
     return {
       form: {},
@@ -123,36 +163,44 @@ export default {
       multipleSelection: [],
       total: 0,
       pageNum: 1,
-      pageSize: 10,
-      name: "",
+      pageSize: 20,
+      department_id: "",
+      system_G: "",
+      system_Gs: [
+        {
+          value: "选项1",
+          label: "城市燃气",
+        },
+        {
+          value: "选项2",
+          label: "工业燃料",
+        },
+        {
+          value: "选项3",
+          label: "化工",
+        },
+        {
+          value: "选项4",
+          label: "发电",
+        },
+      ],
       headerBg: "headerBg",
       dialogFormVisible: false,
-      menuDialogVis: false,
-      defaultProps: {},
-      menuData: [],
-      Props: {
-        label: "name",
-      },
-      expends: [],
-      checks: [],
-      roleId: 0,
     };
   },
   created() {
     this.load();
   },
   methods: {
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate);
-    },
     load() {
       //请求分页查询数据
       this.request
-        .get("/role/page", {
+        .get("/gconsumption/page", {
           params: {
             pageNum: this.pageNum,
             pageSize: this.pageSize,
-            name: this.name,
+            department_id: this.department_id,
+            system_G: this.system_G,
           },
         })
         .then((res) => {
@@ -162,7 +210,8 @@ export default {
         });
     },
     reset() {
-      this.name = "";
+      this.department_id = "";
+      this.system_G = "";
       this.load();
     },
     handleAdd() {
@@ -174,7 +223,7 @@ export default {
       this.dialogFormVisible = true;
     },
     del(id) {
-      this.request.delete("/role/" + id).then((res) => {
+      this.request.delete("/gconsumption/" + id).then((res) => {
         if (res) {
           this.$message.success("删除成功");
           this.load();
@@ -188,7 +237,7 @@ export default {
       if (ids.length === 0) {
         this.$message.error("没有数据可以删除");
       } else {
-        this.request.post("/role/delete/batch", ids).then((res) => {
+        this.request.post("/gconsumption/delete/batch", ids).then((res) => {
           if (res) {
             this.$message.success("批量删除成功");
             this.load();
@@ -198,7 +247,9 @@ export default {
         });
       }
     },
-
+    exp() {
+      window.open("http://localhost:9090/gconsumption/export");
+    },
     handleExcelImportSuccess() {
       this.$message.success("导入成功");
       this.load();
@@ -221,49 +272,31 @@ export default {
       this.pageNum = pageNum;
       this.load();
     },
-    selectMenu(roleId) {
-      this.roleId = roleId;
-      this.request.get("/role/roleMenuIfo/" + roleId).then((res) => {
-        if (res.code === "200") {
-          this.checks = res.data;
-        }
-      });
-      //  请求菜单数据
-      this.request
-        .get("/menu/search", {
-          params: {
-            name: "",
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          this.menuData = res.data;
-          this.expends = res.data.map((v) => v.id);
-        });
-      this.menuDialogVis = true;
-    },
-    saveRoleMenu() {
-      this.request
-        .post("/role/roleMenu/" + this.roleId, this.$refs.tree.getCheckedKeys())
-        .then((res) => {
-          if (res.code === "200") {
-            this.$message.success("分配成功");
-            this.menuDialogVis = false;
-          } else {
-            this.$message.error("分配失败");
-          }
-        });
-    },
     save() {
-      this.request.post("/role/addRole", this.form).then((res) => {
-        if (res.code == "200") {
-          this.$message.success("保存成功");
-          this.dialogFormVisible = false;
-          this.load();
-        } else {
-          this.$message.error("保存失败，" + res.msg);
-        }
-      });
+      var tmp_form = JSON.stringify(this.form);
+      if (
+        tmp_form === "{}" ||
+        this.form.department_id === "" ||
+        this.form.department_id === null ||
+        this.form.department_id === undefined ||
+        this.form.calculation === "" ||
+        this.form.calculation === null ||
+        this.form.calculation === undefined
+      ) {
+        this.$message.error("保存失败，请检查数据必填项等数据");
+      } else {
+        this.request
+          .post("/gconsumption/addGconsumption", this.form)
+          .then((res) => {
+            if (res.code === "200") {
+              this.$message.success("保存成功");
+              this.dialogFormVisible = false;
+              this.load();
+            } else {
+              this.$message.error("保存失败");
+            }
+          });
+      }
     },
   },
 };

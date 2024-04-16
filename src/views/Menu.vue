@@ -3,12 +3,13 @@
     <div style="margin: 10px 0">
       <el-input
         style="width: 200px"
+        size="medium"
         placeholder="请输入名称"
         suffix-icon="el-icon-search"
         v-model="name"
       ></el-input>
-      <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
-      <el-button type="warning" @click="reset">重置</el-button>
+      <el-button class="ml-5" size="medium" type="primary" @click="load">搜索</el-button>
+      <el-button type="warning" size="medium" @click="reset">重置</el-button>
     </div>
     <div style="margin: 10px 0">
       <el-button type="primary" @click="handleAdd"

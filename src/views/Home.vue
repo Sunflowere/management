@@ -48,7 +48,7 @@ export default {
       var chartDom = document.getElementById("main");
       var myChart = echarts.init(chartDom);
       
-      this.request.get("/echarts/members").then((res) => {
+      this.request.get("/eEcharts/members").then((res) => {
         // 填空
         // option.xAxis.data = res.data.x
         option.series[0].data = res.data;
@@ -102,7 +102,7 @@ export default {
       var pieDom = document.getElementById("pie");
       var pieChart = echarts.init(pieDom);
 
-      this.request.get("/echarts/members").then((res) => {
+      this.request.get("/eEcharts/members").then((res) => {
         pieOption.series[0].data = [
           { name: "十一月份", value: res.data[0] },
           { name: "十二月份", value: res.data[1] },

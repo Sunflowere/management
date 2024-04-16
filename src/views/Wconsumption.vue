@@ -3,18 +3,20 @@
     <div style="margin: 10px 0">
       <el-input
         style="width: 200px"
+        size="medium"
         placeholder="请输入用水部门id"
         suffix-icon="el-icon-search"
         v-model="department_id"
       ></el-input>
       <el-input
-        style="width: 200px"
+        style="width: 200px; padding-left: 10px;"
+        size="medium"
         placeholder="请输入用水系统"
         suffix-icon="el-icon-mic"
         v-model="system_W"
       ></el-input>
-      <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
-      <el-button type="warning" @click="reset">重置</el-button>
+      <el-button class="ml-5" size="medium" type="primary" @click="load">搜索</el-button>
+      <el-button type="warning" size="medium" @click="reset">重置</el-button>
     </div>
     <div style="margin: 10px 0">
       <el-button type="primary" @click="handleAdd"

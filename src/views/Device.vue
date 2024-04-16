@@ -3,6 +3,7 @@
     <div style="margin: 10px 0;">
       <el-input style="width: 200px;" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
       <el-input style="width: 200px;" placeholder="请输入型号" suffix-icon="el-icon-view" v-model="model"></el-input>
+      <el-input style="width: 200px;" placeholder="请输入所属部门id" suffix-icon="el-icon-loading" v-model="did"></el-input>
       <el-input style="width: 200px;" placeholder="请输入状态" suffix-icon="el-icon-loading" v-model="status"></el-input>
       <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
       <el-button type="warning" @click="reset">重置</el-button>
@@ -61,6 +62,15 @@
         <el-form-item label="状态">
           <el-input v-model="form.status" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="是否用电">
+          <el-input v-model="form.isEdevice" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="是否用水">
+          <el-input v-model="form.isWdevice" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="是否用气">
+          <el-input v-model="form.isGdevice" autocomplete="off"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -83,6 +93,7 @@ export default {
       pageSize: 10,
       name: '',
       model: '',
+      did: '',
       status: '',
       headerBg: 'headerBg',
       dialogFormVisible: false
@@ -100,6 +111,7 @@ export default {
           pageSize: this.pageSize,
           name: this.name,
           model: this.model,
+          did: this.did,
           status: this.status
         }
       }).then(res => {
@@ -111,6 +123,7 @@ export default {
     reset() {
       this.name = ''
       this.model = ''
+      this.did = ''
       this.status = ''
       this.load()
     },

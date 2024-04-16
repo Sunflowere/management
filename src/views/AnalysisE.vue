@@ -97,13 +97,13 @@
                 border
               >
                 <el-descriptions-item label="当日用电"
-                  >{{ this.eData.data_day }} kWh</el-descriptions-item
+                  >{{ this.Data.data_day }} kWh</el-descriptions-item
                 >
                 <el-descriptions-item label="当月用电"
-                  >{{ this.eData.data_month }} kWh</el-descriptions-item
+                  >{{ this.Data.data_month }} kWh</el-descriptions-item
                 >
                 <el-descriptions-item label="当年用电"
-                  >{{ this.eData.data_year }} kWh</el-descriptions-item
+                  >{{ this.Data.data_year }} kWh</el-descriptions-item
                 >
               </el-descriptions>
               <!-- <i class="el-icon-sunny"></i> -->
@@ -117,8 +117,9 @@
                 >部门累计用电</span
               >
               <i class="el-icon-stopwatch"></i>
-              <h5 style="padding-top: 15px; font-size: medium;">{{ this.department.sumE }} kWh 🚩</h5>
-              
+              <h5 style="padding-top: 15px; font-size: medium">
+                {{ this.department.sumE }} kWh 🚩
+              </h5>
             </div>
           </el-card>
         </el-row>
@@ -126,22 +127,21 @@
           <el-card>
             <div id="total_four" style="width: 100%; height: 270px">
               <el-descriptions
-                title="部门设备"
+                title="部门用电设备"
                 direction="vertical"
                 :column="1"
                 border
               >
                 <el-descriptions-item label="正常设备"
-                  >{{ this.deviceData.normalDevice }} 台</el-descriptions-item
+                  >{{ this.deviceData.normalEDevice }} 台</el-descriptions-item
                 >
                 <el-descriptions-item label="异常设备"
-                  >{{ this.deviceData.errorDevice }} 台</el-descriptions-item
+                  >{{ this.deviceData.errorEDevice }} 台</el-descriptions-item
                 >
                 <el-descriptions-item label="断开连接"
-                  >{{ this.deviceData.disconnected }} 台</el-descriptions-item
+                  >{{ this.deviceData.disconnectedE }} 台</el-descriptions-item
                 >
               </el-descriptions>
-
             </div>
           </el-card>
         </el-row>
@@ -160,14 +160,14 @@ export default {
       id: 2,
       departments: [],
       department: {},
-      eData: {},
+      Data: {},
       deviceData: {},
     };
   },
   created() {
     this.getDepartments();
     this.getDepartment(this.id);
-    this.getEData();
+    this.getData();
     this.getDeviceData();
   },
   watch: {
@@ -176,7 +176,7 @@ export default {
       this.showDayEcharts();
       this.showYearEcharts();
       this.showThreeYearEcharts();
-      this.getEData();
+      this.getData();
       this.getDeviceData();
     },
   },
@@ -188,19 +188,19 @@ export default {
         duration: 0,
       });
     },
-    getEData() {
-      this.request.get("/econsumption/eData/" + this.id).then((res) => {
-        if (res.code === '200') {
-          this.eData = res.data
+    getData() {
+      this.request.get("/econsumption/Data/" + this.id).then((res) => {
+        if (res.code === "200") {
+          this.Data = res.data;
         }
-      })
+      });
     },
     getDeviceData() {
-      this.request.get("/device/deviceData/" + this.id).then((res) => {
-        if (res.code === '200') {
-          this.deviceData = res.data
+      this.request.get("/device/deviceEData/" + this.id).then((res) => {
+        if (res.code === "200") {
+          this.deviceData = res.data;
         }
-      })
+      });
     },
     getDepartment(id) {
       this.request.get("/department/departmentIfo/" + id).then((res) => {
@@ -333,7 +333,7 @@ export default {
           },
         ],
       };
-      this.request.get("/echarts/departmentIfo/" + this.id).then((res) => {
+      this.request.get("/eEcharts/departmentIfo/" + this.id).then((res) => {
         option_day.series[0].data = res.data[0];
         option_day.series[1].data = res.data[1];
         option_day.series[2].data = res.data[2];
@@ -432,7 +432,7 @@ export default {
           },
         ],
       };
-      this.request.get("/echarts/yearDepartmentIfo/" + this.id).then((res) => {
+      this.request.get("/eEcharts/yearDepartmentIfo/" + this.id).then((res) => {
         if (res.code === "200") {
           option_year.series[0].data = res.data[0];
           option_year.series[1].data = res.data[3];
@@ -486,7 +486,7 @@ export default {
         option_threeYear.dataset.source[i] = [];
         option_threeYear.dataset.source[i][0] = "0" + i;
       }
-      this.request.get("/echarts/source/" + this.id).then((res) => {
+      this.request.get("/eEcharts/source/" + this.id).then((res) => {
         if (res.code === "200") {
           option_threeYear.dataset.source[0][1] = res.data.dataYear[2];
           option_threeYear.dataset.source[0][2] = res.data.dataYear[1];

@@ -32,10 +32,25 @@
         <i class="el-icon-data-line"></i>
         <span slot="title">企业概览</span>
       </el-menu-item>
-      <el-menu-item index="/analysis">
-        <i class="el-icon-pie-chart"></i>
-        <span slot="title">能耗分析</span>
-      </el-menu-item>
+      <el-submenu index="4">       
+        <span slot="title"><i class="el-icon-data-analysis"></i>能耗分析</span>
+        <el-menu-item index="/analysise">
+          <i class="el-icon-s-opportunity"></i>
+          <span slot="title">用电时间&设备</span>
+        </el-menu-item>
+        <el-menu-item index="/analysisw">
+          <i class="el-icon-goblet-square-full"></i>
+          <span slot="title">用水时间&设备</span>
+        </el-menu-item>
+        <el-menu-item index="/analysisg">
+          <i class="el-icon-partly-cloudy"></i>
+          <span slot="title">用气时间&设备</span>
+        </el-menu-item>
+        <el-menu-item index="/pie">
+          <i class="el-icon-pie-chart"></i>
+          <span slot="title">占比分析</span>
+        </el-menu-item>
+      </el-submenu>
       <el-menu-item index="/device">
         <i class="el-icon-mouse"></i>
         <span slot="title">设备管理</span>
@@ -44,15 +59,15 @@
         <i class="el-icon-school"></i>
         <span slot="title">部门管理</span>
       </el-menu-item>
-      <el-menu-item index="/file">
+      <!-- <el-menu-item index="/file">
         <i class="el-icon-warning-outline"></i>
         <span slot="title">能耗预警</span>
       </el-menu-item>
       <el-menu-item index="/file">
         <i class="el-icon-odometer"></i>
         <span slot="title">风险评估</span>
-      </el-menu-item>
-      <el-submenu index="4">       
+      </el-menu-item> -->
+      <el-submenu index="5">       
         <span slot="title"><i class="el-icon-notebook-1"></i>数据报表</span>
         <el-menu-item index="/econsumption">
           <i class="el-icon-s-opportunity"></i>
@@ -62,7 +77,7 @@
           <i class="el-icon-goblet-square-full"></i>
           <span slot="title">用水数据</span>
         </el-menu-item>
-        <el-menu-item index="/file">
+        <el-menu-item index="/gconsumption">
           <i class="el-icon-partly-cloudy"></i>
           <span slot="title">用气数据</span>
         </el-menu-item>

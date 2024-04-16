@@ -13,7 +13,7 @@ const routes = [
     redirect: '/home',
     children: [
       {
-        path: '/home',
+        path: 'home',
         name: '首页',
         component: () => import('../views/Home.vue')
       },
@@ -62,9 +62,29 @@ const routes = [
         component: () => import('../views/Wconsumption.vue')
       },
       {
-        path: '/analysis',
-        name: '能耗分析',
+        path: '/gconsumption',
+        name: '用气数据',
+        component: () => import('../views/Gconsumption.vue')
+      },
+      {
+        path: '/analysise',
+        name: '用电分析',
         component: () => import('../views/AnalysisE.vue')
+      },
+      {
+        path: '/analysisw',
+        name: '用水分析',
+        component: () => import('../views/AnalysisW.vue')
+      },
+      {
+        path: '/analysisg',
+        name: '用气分析',
+        component: () => import('../views/AnalysisG.vue')
+      },
+      {
+        path: '/pie',
+        name: '占比分析',
+        component: () => import('../views/PieAnalysis.vue')
       },
     ]
   },

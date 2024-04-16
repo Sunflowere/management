@@ -238,7 +238,7 @@ export default {
         ],
         series: [
           {
-            name: "Direct",
+            name: "耗能计量",
             type: "bar",
             barWidth: "60%",
             data: [10, 52, 200, 334, 390, 330, 220],
@@ -270,8 +270,7 @@ export default {
       } else {
         this.updateSystemPie();
         this.updateDevicePie();
-        // this.showDevicePie();
-        // this.showTrend();
+        this.updateTrend()
       }
     },
     reset() {
@@ -377,7 +376,7 @@ export default {
             if (res.data.length === 0) {
               this.$message.info("该时间段对应能耗数据为空");
             } else {
-              this.option_trend.xAxis[0].data = res.data.xAxisArray;
+              this.option_trend.xAxis[0].data = res.data.xaxisArray;
               this.option_trend.series[0].data = res.data.valueArray;
               switch (this.cost_type) {
                 case "econsumption":
